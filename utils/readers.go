@@ -46,3 +46,27 @@ func ReadFile(path string) []byte {
 
 	return data
 }
+
+// Custom struct to hold the instructions and their corresponding values
+type InstVal struct {
+	Instruction string
+	Val         int
+}
+
+// Parses the binary data into
+func SplitInstructions(data []byte) []*InstVal {
+	var instructions []*InstVal
+	for _, line := range strings.Split(string(data), "\n") {
+		if len(line) == 0 {
+			continue
+		}
+
+		iSet := strings.Split(line, " ")
+		inst := iSet[0]
+		val, _ := strconv.Atoi(iSet[1])
+
+		instructions = append(instructions, &InstVal{Instruction: inst, Val: val})
+	}
+
+	return instructions
+}
