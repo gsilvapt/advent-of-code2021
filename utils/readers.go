@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bufio"
 	"os"
 	"strconv"
 	"strings"
@@ -69,4 +70,33 @@ func SplitInstructions(data []byte) []*InstVal {
 	}
 
 	return instructions
+}
+
+// Use scanner to read blank line delimited pieces
+func ReadChunks(path string) [][]string {
+	file, err := os.Open(path)
+	defer file.Close()
+	PanicIfError(err)
+
+	scanner := bufio.NewScanner(file)
+	var chunks [][]string = [][]string{}
+	var thisChunk []string = []string{}
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		if len(line) == 0 {
+			chunks = append(chunks, thisChunk)
+			thisChunk = []string{}
+		} else {
+			thisChunk = append(thisChunk, line)
+		}
+	}
+
+	if len(thisChunk) > 0 {
+		chunks = append(chunks, thisChunk)
+	}
+
+	PanicIfError(scanner.Err())
+
+	return chunks
 }
